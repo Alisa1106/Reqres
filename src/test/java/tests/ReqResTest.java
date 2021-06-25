@@ -15,6 +15,8 @@ import static org.hamcrest.Matchers.hasKey;
 @Listeners(TestListener.class)
 public class ReqResTest {
 
+    public static final String BASE_URL = "https://reqres.in/api/";
+
     /**
      * Post user test.
      * This method create and post user, then verify status code and 'name' and 'job' fields
@@ -29,7 +31,7 @@ public class ReqResTest {
             .body(user)
             .header("Content-Type", "application/json")
         .when()
-            .post("https://reqres.in/api/users")
+            .post(BASE_URL + "users")
         .then()
             .log().all()
             .body("name", equalTo(user.getName()),
@@ -46,13 +48,12 @@ public class ReqResTest {
         String body =
         given()
         .when()
-            .get("https://reqres.in/api/users?page=2")
+            .get(BASE_URL + "users?page=2")
         .then()
             .log().all()
             .statusCode(200)
             .extract().body().asString();
         UsersList usersList = new Gson().fromJson(body, UsersList.class);
-        System.out.println(usersList);
         Assert.assertEquals(usersList.getData().get(0).getId(), 7);
     }
 
@@ -65,7 +66,7 @@ public class ReqResTest {
         String body =
         given()
         .when()
-            .get("https://reqres.in/api/users/2")
+            .get(BASE_URL + "users/2")
         .then()
             .log().all()
             .statusCode(200)
@@ -82,7 +83,7 @@ public class ReqResTest {
     public void singleUserNotFoundTest() {
         given()
         .when()
-            .get("https://reqres.in/api/users/23")
+            .get(BASE_URL + "users/23")
         .then()
             .log().all()
             .body(equalTo("{}"))
@@ -98,13 +99,12 @@ public class ReqResTest {
         String body =
         given()
         .when()
-            .get("https://reqres.in/api/unknown")
+            .get(BASE_URL + "unknown")
         .then()
             .log().all()
             .statusCode(200)
             .extract().body().asString();
         ResourceList resourceList = new Gson().fromJson(body, ResourceList.class);
-        System.out.println(resourceList);
         Assert.assertEquals(resourceList.getData().get(3).getYear(), 2003);
     }
 
@@ -117,13 +117,12 @@ public class ReqResTest {
         String body =
         given()
         .when()
-            .get("https://reqres.in/api/unknown/2")
+            .get(BASE_URL + "unknown/2")
         .then()
             .log().all()
             .statusCode(200)
             .extract().body().asString();
         SingleResource singleResource = new Gson().fromJson(body, SingleResource.class);
-        System.out.println(singleResource);
         Assert.assertEquals(singleResource.getData().getName(), "fuchsia rose");
     }
 
@@ -135,7 +134,7 @@ public class ReqResTest {
     public void singleResourceNotFoundTest() {
         given()
         .when()
-            .get("https://reqres.in/api/unknown/23")
+            .get( BASE_URL + "unknown/23")
         .then()
             .log().all()
             .body(equalTo("{}"))
@@ -156,7 +155,7 @@ public class ReqResTest {
             .body(user)
             .header("Content-Type", "application/json")
         .when()
-            .post("https://reqres.in/api/users/2")
+            .post(BASE_URL + "users/2")
         .then()
             .log().all();
         user = User.builder()
@@ -167,7 +166,7 @@ public class ReqResTest {
             .body(user)
             .header("Content-Type", "application/json")
         .when()
-            .put("https://reqres.in/api/users/2")
+            .put(BASE_URL + "users/2")
         .then()
             .log().all()
             .body("name", equalTo(user.getName()),
@@ -189,7 +188,7 @@ public class ReqResTest {
             .body(user)
             .header("Content-Type", "application/json")
         .when()
-            .post("https://reqres.in/api/users/2")
+            .post(BASE_URL + "users/2")
         .then()
             .log().all();
         user = User.builder()
@@ -200,7 +199,7 @@ public class ReqResTest {
             .body(user)
             .header("Content-Type", "application/json")
         .when()
-            .patch("https://reqres.in/api/users/2")
+            .patch(BASE_URL + "users/2")
         .then()
             .log().all()
             .body("name", equalTo(user.getName()),
@@ -209,14 +208,14 @@ public class ReqResTest {
     }
 
     /**
-     * Delete user.
+     * Delete user test.
      * This method delete user and verify status code and that api body is empty
      */
     @Test(description = "Delete user then verify status code and that api body is empty")
-    public void deleteUser() {
+    public void deleteUserTest() {
         given()
         .when()
-            .delete("https://reqres.in/api/users/2")
+            .delete(BASE_URL + "users/2")
         .then()
             .log().all()
             .body(equalTo(""))
@@ -237,7 +236,7 @@ public class ReqResTest {
         .when()
             .contentType(ContentType.JSON)
             .body(users)
-            .post("https://reqres.in/api/register")
+            .post(BASE_URL + "register")
         .then()
             .log().all()
             .body("$", hasKey("id"),
@@ -258,7 +257,7 @@ public class ReqResTest {
         .when()
             .contentType(ContentType.JSON)
             .body(users)
-            .post("https://reqres.in/api/register")
+            .post(BASE_URL + "register")
         .then()
             .log().all()
             .body("error", equalTo("Missing password"))
@@ -279,7 +278,7 @@ public class ReqResTest {
         .when()
             .contentType(ContentType.JSON)
             .body(users)
-            .post("https://reqres.in/api/login")
+            .post(BASE_URL + "login")
         .then()
             .log().all()
             .body("$", hasKey("token"))
@@ -299,7 +298,7 @@ public class ReqResTest {
         .when()
             .contentType(ContentType.JSON)
             .body(users)
-            .post("https://reqres.in/api/login")
+            .post(BASE_URL + "login")
         .then()
             .log().all()
             .body("error", equalTo("Missing password"))
@@ -315,7 +314,7 @@ public class ReqResTest {
         String body =
         given()
         .when()
-            .get("https://reqres.in/api/users?delay=3")
+            .get(BASE_URL + "users?delay=3")
         .then()
             .log().all()
             .statusCode(200)
